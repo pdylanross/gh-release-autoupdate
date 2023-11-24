@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/pdylanross/gh-release-autoupdate/autoupdate/types"
-	"github.com/pdylanross/gh-release-autoupdate/internal/gh"
 )
 
 // UpdaterOptions configures the updater with settings on how to update and metadata about the app.
@@ -25,7 +24,7 @@ type UpdaterOptions struct {
 	Cache *CacheOptions
 
 	// Github sets the options for the github api
-	Github *gh.GithubClientOptions
+	Github *types.GithubClientOptions
 
 	// VersionStrategy determines how we look at versions and determine if they're valid upgrades
 	VersionStrategy types.VersioningStrategy
@@ -64,9 +63,9 @@ func (uo *UpdaterOptions) Validate() error {
 	return nil
 }
 
-func (uo *UpdaterOptions) GetGithubOpts() *gh.GithubClientOptions {
+func (uo *UpdaterOptions) GetGithubOpts() *types.GithubClientOptions {
 	if uo.Github == nil {
-		return gh.NewOptions(uo.PackageName, uo.PackageVersion)
+		uo.Github = uo.defaultGithupOpts()
 	}
 
 	return uo.Github
@@ -74,4 +73,8 @@ func (uo *UpdaterOptions) GetGithubOpts() *gh.GithubClientOptions {
 
 func (uo *UpdaterOptions) GetStrategy() types.VersioningStrategy {
 	return uo.VersionStrategy
+}
+
+func (uo *UpdaterOptions) defaultGithupOpts() *types.GithubClientOptions {
+	return types.NewOptions(uo.PackageName, uo.PackageVersion).WithAuthenticationProvider(DefaultAuthProvider())
 }

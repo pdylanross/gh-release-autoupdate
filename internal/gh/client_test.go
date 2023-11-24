@@ -3,6 +3,8 @@ package gh
 import (
 	"testing"
 
+	"github.com/pdylanross/gh-release-autoupdate/autoupdate/types"
+
 	"github.com/migueleliasweb/go-github-mock/src/mock"
 	"github.com/stretchr/testify/require"
 )
@@ -14,7 +16,7 @@ func TestNewGithubClient(t *testing.T) {
 	})
 
 	t.Run("CanConstructWithMockClient", func(t *testing.T) {
-		opts := &GithubClientOptions{HTTPClient: mock.NewMockedHTTPClient(), UserAgent: "test-package/v1"}
+		opts := &types.GithubClientOptions{HTTPClient: mock.NewMockedHTTPClient(), UserAgent: "test-package/v1"}
 		_, err := NewGithubClient(opts)
 		require.Nil(t, err)
 	})

@@ -2,7 +2,6 @@ package autoupdate
 
 import (
 	"github.com/pdylanross/gh-release-autoupdate/autoupdate/types"
-	"github.com/pdylanross/gh-release-autoupdate/internal/gh"
 )
 
 // WithPackage sets the package name and version of the app.
@@ -45,9 +44,9 @@ func (uo *UpdaterOptions) ConfigureCache(f func(options *CacheOptions) *CacheOpt
 }
 
 // ConfigureGithub configures the github api settings.
-func (uo *UpdaterOptions) ConfigureGithub(f func(option *gh.GithubClientOptions) *gh.GithubClientOptions) *UpdaterOptions {
+func (uo *UpdaterOptions) ConfigureGithub(f func(option *types.GithubClientOptions) *types.GithubClientOptions) *UpdaterOptions {
 	if uo.Github == nil {
-		uo.Github = gh.NewOptions(uo.PackageName, uo.PackageVersion)
+		uo.Github = uo.defaultGithupOpts()
 	}
 
 	uo.Github = f(uo.Github)

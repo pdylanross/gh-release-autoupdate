@@ -3,6 +3,9 @@ package autoupdate
 import (
 	"context"
 
+	"github.com/google/go-github/v56/github"
+	"github.com/pdylanross/gh-release-autoupdate/internal/gh"
+
 	"github.com/pdylanross/gh-release-autoupdate/autoupdate/types"
 
 	"github.com/pdylanross/gh-release-autoupdate/internal/release"
@@ -12,7 +15,8 @@ import (
 
 // Updater is the main entrypoint to the auto update process.
 type Updater struct {
-	opts *UpdaterOptions
+	opts     *UpdaterOptions
+	ghClient *github.Client
 }
 
 // NewUpdater creates a new updater with options.
@@ -21,12 +25,17 @@ func NewUpdater(opts *UpdaterOptions) (*Updater, error) {
 		return nil, err
 	}
 
-	return &Updater{opts: opts}, nil
+	ghClient, err := gh.NewGithubClient(opts.GetGithubOpts())
+	if err != nil {
+		return nil, err
+	}
+
+	return &Updater{opts: opts, ghClient: ghClient}, nil
 }
 
 // Check for new versions.
 func (u *Updater) Check(ctx context.Context) (*types.ReleaseCandidate, error) {
-	checker, err := release.NewResolver(u.opts.GetGithubOpts(), u.opts.GetStrategy())
+	checker, err := release.NewResolver(u.ghClient, u.opts.GetStrategy())
 	if err != nil {
 		return nil, err
 	}

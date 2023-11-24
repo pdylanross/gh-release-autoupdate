@@ -16,11 +16,7 @@ type Resolver struct {
 	strategy types.VersioningStrategy
 }
 
-func NewResolver(ghOpts *gh.GithubClientOptions, strategy types.VersioningStrategy) (*Resolver, error) {
-	ghClient, err := gh.NewGithubClient(ghOpts)
-	if err != nil {
-		return nil, err
-	}
+func NewResolver(ghClient *github.Client, strategy types.VersioningStrategy) (*Resolver, error) {
 	return &Resolver{ghClient: ghClient, strategy: strategy}, nil
 }
 

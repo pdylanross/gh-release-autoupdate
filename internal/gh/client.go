@@ -1,41 +1,16 @@
 package gh
 
 import (
+	"context"
 	"errors"
-	"fmt"
 	"net/http"
+
+	"github.com/pdylanross/gh-release-autoupdate/autoupdate/types"
 
 	"github.com/google/go-github/v56/github"
 )
 
-type GithubClientOptions struct {
-	HTTPClient          *http.Client
-	UserAgent           string
-	CustomConfigurators []func(*github.Client)
-}
-
-func NewOptions(appName string, appVersion string) *GithubClientOptions {
-	opt := &GithubClientOptions{}
-	return opt.WithApp(appName, appVersion)
-}
-
-func (o *GithubClientOptions) WithHTTPClient(cl *http.Client) *GithubClientOptions {
-	o.HTTPClient = cl
-	return o
-}
-
-func (o *GithubClientOptions) WithCustom(cfg func(client *github.Client)) *GithubClientOptions {
-	o.CustomConfigurators = append(o.CustomConfigurators, cfg)
-	return o
-}
-
-func (o *GithubClientOptions) WithApp(appName string, appVersion string) *GithubClientOptions {
-	userAgent := fmt.Sprintf("%s/%s", appName, appVersion)
-	o.UserAgent = userAgent
-	return o
-}
-
-func NewGithubClient(opts *GithubClientOptions) (*github.Client, error) {
+func NewGithubClient(opts *types.GithubClientOptions) (*github.Client, error) {
 	if opts != nil {
 		return configureClient(opts)
 	}
@@ -43,7 +18,7 @@ func NewGithubClient(opts *GithubClientOptions) (*github.Client, error) {
 	return nil, errors.New("nil github client options")
 }
 
-func configureClient(opts *GithubClientOptions) (*github.Client, error) {
+func configureClient(opts *types.GithubClientOptions) (*github.Client, error) {
 	if opts.UserAgent == "" {
 		return nil, errors.New("GithubClientOptions.UserAgent is required")
 	}
@@ -54,6 +29,19 @@ func configureClient(opts *GithubClientOptions) (*github.Client, error) {
 
 	cl := github.NewClient(opts.HTTPClient)
 	cl.UserAgent = opts.UserAgent
+
+	if opts.Authentication != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), opts.AuthTimeout)
+		defer cancel()
+		token, found, err := opts.Authentication.GetToken(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		if found {
+			cl = cl.WithAuthToken(token)
+		}
+	}
 
 	return cl, nil
 }
