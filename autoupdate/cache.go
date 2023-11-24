@@ -1,8 +1,8 @@
-package cache
+package autoupdate
 
 import "time"
 
-type Options struct {
+type CacheOptions struct {
 	// PackageName overrides the PackageName for use with caching.
 	// The cache will store metadata in os.UserCacheDir()/PackageName
 	PackageName *string
@@ -11,8 +11,8 @@ type Options struct {
 	CheckInterval time.Duration
 }
 
-func DefaultCacheOptions() *Options {
-	return &Options{
+func DefaultCacheOptions() *CacheOptions {
+	return &CacheOptions{
 		PackageName:   nil,
 		CheckInterval: time.Hour * 24,
 	}

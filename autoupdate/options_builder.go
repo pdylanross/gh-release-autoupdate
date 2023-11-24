@@ -1,9 +1,8 @@
-package pkg
+package autoupdate
 
 import (
-	"github.com/pdylanross/gh-release-autoupdate/pkg/cache"
-	"github.com/pdylanross/gh-release-autoupdate/pkg/gh"
-	"github.com/pdylanross/gh-release-autoupdate/pkg/versioning"
+	"github.com/pdylanross/gh-release-autoupdate/autoupdate/types"
+	"github.com/pdylanross/gh-release-autoupdate/internal/gh"
 )
 
 // WithPackage sets the package name and version of the app.
@@ -23,8 +22,8 @@ func (uo *UpdaterOptions) WithRepo(owner string, name string) *UpdaterOptions {
 	return uo
 }
 
-// WithVersionStrategy sets the versioning strategy.
-func (uo *UpdaterOptions) WithVersionStrategy(start versioning.Strategy) *UpdaterOptions {
+// WithVersionStrategy sets the types strategy.
+func (uo *UpdaterOptions) WithVersionStrategy(start types.VersioningStrategy) *UpdaterOptions {
 	uo.VersionStrategy = start
 	return uo
 }
@@ -36,9 +35,9 @@ func (uo *UpdaterOptions) WithoutCache() *UpdaterOptions {
 }
 
 // ConfigureCache configures the update check caching options.
-func (uo *UpdaterOptions) ConfigureCache(f func(options *cache.Options) *cache.Options) *UpdaterOptions {
+func (uo *UpdaterOptions) ConfigureCache(f func(options *CacheOptions) *CacheOptions) *UpdaterOptions {
 	if uo.Cache == nil {
-		uo.Cache = cache.DefaultCacheOptions()
+		uo.Cache = DefaultCacheOptions()
 	}
 
 	uo.Cache = f(uo.Cache)

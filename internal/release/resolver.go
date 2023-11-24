@@ -4,18 +4,19 @@ import (
 	"context"
 	"strings"
 
+	"github.com/pdylanross/gh-release-autoupdate/autoupdate/types"
+	"github.com/pdylanross/gh-release-autoupdate/internal/gh"
+
 	"github.com/Masterminds/semver/v3"
 	"github.com/google/go-github/v56/github"
-	"github.com/pdylanross/gh-release-autoupdate/pkg/gh"
-	"github.com/pdylanross/gh-release-autoupdate/pkg/versioning"
 )
 
 type Resolver struct {
 	ghClient *github.Client
-	strategy versioning.Strategy
+	strategy types.VersioningStrategy
 }
 
-func NewResolver(ghOpts *gh.GithubClientOptions, strategy versioning.Strategy) (*Resolver, error) {
+func NewResolver(ghOpts *gh.GithubClientOptions, strategy types.VersioningStrategy) (*Resolver, error) {
 	ghClient, err := gh.NewGithubClient(ghOpts)
 	if err != nil {
 		return nil, err
@@ -23,16 +24,11 @@ func NewResolver(ghOpts *gh.GithubClientOptions, strategy versioning.Strategy) (
 	return &Resolver{ghClient: ghClient, strategy: strategy}, nil
 }
 
-type UpdateRelease struct {
-	ID   int64
-	Name string
+func newCheckResponse(release *github.RepositoryRelease) *types.ReleaseCandidate {
+	return &types.ReleaseCandidate{ID: *release.ID, Name: *release.Name}
 }
 
-func newCheckResponse(release *github.RepositoryRelease) *UpdateRelease {
-	return &UpdateRelease{ID: *release.ID, Name: *release.Name}
-}
-
-func (ch *Resolver) Resolve(ctx context.Context, repoOwner string, repoName string, currentVersion string) (*UpdateRelease, error) {
+func (ch *Resolver) Resolve(ctx context.Context, repoOwner string, repoName string, currentVersion string) (*types.ReleaseCandidate, error) {
 	currentVersionSemver, err := semver.NewVersion(currentVersion)
 	if err != nil {
 		return nil, err
@@ -74,7 +70,7 @@ func (ch *Resolver) Resolve(ctx context.Context, repoOwner string, repoName stri
 	}
 }
 
-func (ch *Resolver) checkPage(ctx context.Context, page []*github.RepositoryRelease, currentVersion *semver.Version) (*UpdateRelease, bool, error) {
+func (ch *Resolver) checkPage(ctx context.Context, page []*github.RepositoryRelease, currentVersion *semver.Version) (*types.ReleaseCandidate, bool, error) {
 	if err := ctx.Err(); err != nil {
 		return nil, false, err
 	}
@@ -92,7 +88,7 @@ func (ch *Resolver) checkPage(ctx context.Context, page []*github.RepositoryRele
 	return nil, false, nil
 }
 
-func (ch *Resolver) checkReleaseItem(ctx context.Context, item *github.RepositoryRelease, currentVersion *semver.Version) (*UpdateRelease, bool, error) {
+func (ch *Resolver) checkReleaseItem(ctx context.Context, item *github.RepositoryRelease, currentVersion *semver.Version) (*types.ReleaseCandidate, bool, error) {
 	if err := ctx.Err(); err != nil {
 		return nil, false, err
 	}

@@ -1,13 +1,12 @@
-package pkg
+package autoupdate
 
 import (
 	"errors"
 	"fmt"
 	"strings"
 
-	"github.com/pdylanross/gh-release-autoupdate/pkg/cache"
-	"github.com/pdylanross/gh-release-autoupdate/pkg/gh"
-	"github.com/pdylanross/gh-release-autoupdate/pkg/versioning"
+	"github.com/pdylanross/gh-release-autoupdate/autoupdate/types"
+	"github.com/pdylanross/gh-release-autoupdate/internal/gh"
 )
 
 // UpdaterOptions configures the updater with settings on how to update and metadata about the app.
@@ -23,20 +22,20 @@ type UpdaterOptions struct {
 	RepoName string
 
 	// Cache sets up the update cache. If nil, caching is disabled
-	Cache *cache.Options
+	Cache *CacheOptions
 
 	// Github sets the options for the github api
 	Github *gh.GithubClientOptions
 
 	// VersionStrategy determines how we look at versions and determine if they're valid upgrades
-	VersionStrategy versioning.Strategy
+	VersionStrategy types.VersioningStrategy
 }
 
 // DefaultOptions creates an opinionated default set of options.
 func DefaultOptions() *UpdaterOptions {
 	return &UpdaterOptions{
-		Cache:           cache.DefaultCacheOptions(),
-		VersionStrategy: versioning.Stable(),
+		Cache:           DefaultCacheOptions(),
+		VersionStrategy: Stable(),
 	}
 }
 
@@ -73,6 +72,6 @@ func (uo *UpdaterOptions) GetGithubOpts() *gh.GithubClientOptions {
 	return uo.Github
 }
 
-func (uo *UpdaterOptions) GetStrategy() versioning.Strategy {
+func (uo *UpdaterOptions) GetStrategy() types.VersioningStrategy {
 	return uo.VersionStrategy
 }

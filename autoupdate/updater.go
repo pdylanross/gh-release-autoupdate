@@ -1,9 +1,12 @@
-package pkg
+package autoupdate
 
 import (
 	"context"
 
-	"github.com/pdylanross/gh-release-autoupdate/pkg/release"
+	"github.com/pdylanross/gh-release-autoupdate/autoupdate/types"
+
+	"github.com/pdylanross/gh-release-autoupdate/internal/release"
+
 	"github.com/reugn/async"
 )
 
@@ -22,7 +25,7 @@ func NewUpdater(opts *UpdaterOptions) (*Updater, error) {
 }
 
 // Check for new versions.
-func (u *Updater) Check(ctx context.Context) (*release.UpdateRelease, error) {
+func (u *Updater) Check(ctx context.Context) (*types.ReleaseCandidate, error) {
 	checker, err := release.NewResolver(u.opts.GetGithubOpts(), u.opts.GetStrategy())
 	if err != nil {
 		return nil, err
@@ -32,8 +35,8 @@ func (u *Updater) Check(ctx context.Context) (*release.UpdateRelease, error) {
 }
 
 // CheckDeferred checks for new versions in a separate goroutine.
-func (u *Updater) CheckDeferred(ctx context.Context) async.Future[release.UpdateRelease] {
-	promise := async.NewPromise[release.UpdateRelease]()
+func (u *Updater) CheckDeferred(ctx context.Context) async.Future[types.ReleaseCandidate] {
+	promise := async.NewPromise[types.ReleaseCandidate]()
 
 	go func() {
 		res, err := u.Check(ctx)
