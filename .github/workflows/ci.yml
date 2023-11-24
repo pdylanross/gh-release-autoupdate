@@ -1,7 +1,9 @@
-on:
-  push:
-    branches-ignore:
-      - gh-pages
+on: [push]
+
+permissions:
+  contents: write
+  pull-requests: write
+
 
 name: CI
 jobs:
