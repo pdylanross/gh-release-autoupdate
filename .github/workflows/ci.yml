@@ -1,0 +1,41 @@
+on:
+  push:
+    branches-ignore:
+      - gh-pages
+
+name: CI
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup
+        uses: ./.github/actions/setup-golang
+        with:
+          cache: false
+      - uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.54.2
+
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup
+        uses: ./.github/actions/setup-golang
+      - name: unit-test
+        run: make unit-test
+
+  release-please:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs:
+      - lint
+      - unit-test
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        with:
+          release-type: go
+          package-name: github.com/pdylanross/go-gh-release-autoupdate
+          command: manifest
+          token: ${{ secrets.RELEASE_PLEASE_PAT }}

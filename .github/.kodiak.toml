@@ -1,0 +1,23 @@
+version = 1
+[merge]
+method="squash"
+
+[merge.message]
+title = "pull_request_title" # default: "github_default"
+merge.message.body_type = "plain_text"
+merge.message.include_coauthors = true
+body_type = "plain_text"
+
+
+[merge.automerge_dependencies]
+# only auto merge "minor" and "patch" version upgrades.
+# do not automerge "major" version upgrades.
+versions = ["minor", "patch"]
+usernames = ["dependabot"]
+
+[update]
+ignored_usernames = ["dependabot"]
+
+
+[approve]
+auto_approve_usernames = ["dependabot", "pdylanross"]
