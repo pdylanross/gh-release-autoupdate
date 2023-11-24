@@ -38,4 +38,3 @@ jobs:
           release-type: go
           package-name: github.com/pdylanross/go-gh-release-autoupdate
           command: manifest
-          token: ${{ secrets.RELEASE_PLEASE_PAT }}
