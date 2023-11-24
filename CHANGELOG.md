@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/pdylanross/gh-release-autoupdate/compare/v0.2.0...v0.2.1) (2023-11-24)
+
+
+### Features
+
+* added github authentication mechanism ([dcdcc81](https://github.com/pdylanross/gh-release-autoupdate/commit/dcdcc810ae5c43137c0ce9598bb22291db150ab4))
+
 ## [0.2.0](https://github.com/pdylanross/gh-release-autoupdate/compare/v0.1.0...v0.2.0) (2023-11-24)
 
 
