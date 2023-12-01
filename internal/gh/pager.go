@@ -30,3 +30,18 @@ func (p *Pager[T]) NextPage() ([]T, bool, error) {
 
 	return items, finished, nil
 }
+
+func (p *Pager[T]) GetAll() ([]T, error) {
+	var ret []T
+	for {
+		currentPage, done, err := p.NextPage()
+		if err != nil {
+			return nil, err
+		}
+
+		ret = append(ret, currentPage...)
+		if done {
+			return ret, nil
+		}
+	}
+}

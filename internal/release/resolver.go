@@ -20,8 +20,29 @@ func NewResolver(ghClient *github.Client, strategy types.VersioningStrategy) (*R
 	return &Resolver{ghClient: ghClient, strategy: strategy}, nil
 }
 
-func newCheckResponse(release *github.RepositoryRelease) *types.ReleaseCandidate {
-	return &types.ReleaseCandidate{ID: *release.ID, Name: *release.Name}
+func (ch *Resolver) newReleaseCandidate(ctx context.Context, owner string, repo string, release *github.RepositoryRelease) (*types.ReleaseCandidate, error) {
+	pager, err := gh.NewPager(ch.ghClient, func(gh *github.Client, page *github.ListOptions) ([]*github.ReleaseAsset, *github.Response, error) {
+		return gh.Repositories.ListReleaseAssets(ctx, owner, repo, release.GetID(), page)
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	assets, err := pager.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	rcAssets := make([]types.ReleaseCandidateAsset, len(assets))
+	for _, asset := range assets {
+		rcAssets = append(rcAssets, types.ReleaseCandidateAsset{
+			ID:   asset.GetID(),
+			Name: asset.GetName(),
+		})
+	}
+
+	return &types.ReleaseCandidate{ID: release.GetID(), Name: release.GetName(), Assets: rcAssets, Owner: owner, Repository: repo}, nil
 }
 
 func (ch *Resolver) Resolve(ctx context.Context, repoOwner string, repoName string, currentVersion string) (*types.ReleaseCandidate, error) {
@@ -52,7 +73,7 @@ func (ch *Resolver) Resolve(ctx context.Context, repoOwner string, repoName stri
 			return nil, err
 		}
 
-		if resp, downgrade, err := ch.checkPage(ctx, page, currentVersionSemver); err != nil {
+		if resp, downgrade, err := ch.checkPage(ctx, page, repoOwner, repoName, currentVersionSemver); err != nil {
 			return nil, err
 		} else if resp != nil {
 			return resp, err
@@ -66,13 +87,13 @@ func (ch *Resolver) Resolve(ctx context.Context, repoOwner string, repoName stri
 	}
 }
 
-func (ch *Resolver) checkPage(ctx context.Context, page []*github.RepositoryRelease, currentVersion *semver.Version) (*types.ReleaseCandidate, bool, error) {
+func (ch *Resolver) checkPage(ctx context.Context, page []*github.RepositoryRelease, repoOwner string, repoName string, currentVersion *semver.Version) (*types.ReleaseCandidate, bool, error) {
 	if err := ctx.Err(); err != nil {
 		return nil, false, err
 	}
 
 	for _, rel := range page {
-		if resp, downgrade, err := ch.checkReleaseItem(ctx, rel, currentVersion); err != nil {
+		if resp, downgrade, err := ch.checkReleaseItem(ctx, rel, repoOwner, repoName, currentVersion); err != nil {
 			return nil, false, err
 		} else if resp != nil {
 			return resp, false, nil
@@ -84,7 +105,7 @@ func (ch *Resolver) checkPage(ctx context.Context, page []*github.RepositoryRele
 	return nil, false, nil
 }
 
-func (ch *Resolver) checkReleaseItem(ctx context.Context, item *github.RepositoryRelease, currentVersion *semver.Version) (*types.ReleaseCandidate, bool, error) {
+func (ch *Resolver) checkReleaseItem(ctx context.Context, item *github.RepositoryRelease, repoOwner string, repoName string, currentVersion *semver.Version) (*types.ReleaseCandidate, bool, error) {
 	if err := ctx.Err(); err != nil {
 		return nil, false, err
 	}
@@ -105,7 +126,12 @@ func (ch *Resolver) checkReleaseItem(ctx context.Context, item *github.Repositor
 	}
 
 	if ch.strategy.IsUpgrade(currentVersion, itemVersion) {
-		return newCheckResponse(item), false, nil
+		resp, err := ch.newReleaseCandidate(ctx, repoOwner, repoName, item)
+		if err != nil {
+			return nil, false, err
+		}
+
+		return resp, false, nil
 	}
 
 	return nil, false, nil

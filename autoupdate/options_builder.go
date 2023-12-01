@@ -33,6 +33,12 @@ func (uo *UpdaterOptions) WithoutCache() *UpdaterOptions {
 	return uo
 }
 
+// WithAssetResolver sets the ReleaseAssetResolver.
+func (uo *UpdaterOptions) WithAssetResolver(resolver types.ReleaseAssetResolver) *UpdaterOptions {
+	uo.AssetResolver = resolver
+	return uo
+}
+
 // ConfigureCache configures the update check caching options.
 func (uo *UpdaterOptions) ConfigureCache(f func(options *CacheOptions) *CacheOptions) *UpdaterOptions {
 	if uo.Cache == nil {

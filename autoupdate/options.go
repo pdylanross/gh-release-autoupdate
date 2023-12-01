@@ -28,6 +28,10 @@ type UpdaterOptions struct {
 
 	// VersionStrategy determines how we look at versions and determine if they're valid upgrades
 	VersionStrategy types.VersioningStrategy
+
+	// AssetResolver defines how we look at assets and resolve those to a downloadable artifact for the current
+	// os and processor architecture
+	AssetResolver types.ReleaseAssetResolver
 }
 
 // DefaultOptions creates an opinionated default set of options.
@@ -35,6 +39,7 @@ func DefaultOptions() *UpdaterOptions {
 	return &UpdaterOptions{
 		Cache:           DefaultCacheOptions(),
 		VersionStrategy: Stable(),
+		AssetResolver:   GoReleaserAssetResolver(),
 	}
 }
 

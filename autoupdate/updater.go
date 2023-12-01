@@ -35,12 +35,16 @@ func NewUpdater(opts *UpdaterOptions) (*Updater, error) {
 
 // Check for new versions.
 func (u *Updater) Check(ctx context.Context) (*types.ReleaseCandidate, error) {
-	checker, err := release.NewResolver(u.ghClient, u.opts.GetStrategy())
+	resolver, err := release.NewResolver(u.ghClient, u.opts.GetStrategy())
 	if err != nil {
 		return nil, err
 	}
 
-	return checker.Resolve(ctx, u.opts.RepoOwner, u.opts.RepoName, u.opts.PackageVersion)
+	return resolver.Resolve(ctx, u.opts.RepoOwner, u.opts.RepoName, u.opts.PackageVersion)
+}
+
+func (u *Updater) GetAsset(rc *types.ReleaseCandidate) *types.ReleaseCandidateAsset {
+	return u.opts.AssetResolver.ResolveAsset(u.opts.PackageName, rc)
 }
 
 // CheckDeferred checks for new versions in a separate goroutine.
