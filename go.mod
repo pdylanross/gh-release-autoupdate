@@ -10,7 +10,7 @@ require (
 	github.com/google/go-github/v56 v56.0.0
 	github.com/migueleliasweb/go-github-mock v0.0.23
 	github.com/reugn/async v0.8.0
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 )
 
 require (
