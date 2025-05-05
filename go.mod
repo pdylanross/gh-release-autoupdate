@@ -1,14 +1,13 @@
 module github.com/pdylanross/gh-release-autoupdate
 
 go 1.21
-
-toolchain go1.21.0
+toolchain go1.24.1
 
 require (
 	github.com/Masterminds/semver/v3 v3.3.1
 	github.com/cli/go-gh/v2 v2.11.2
 	github.com/google/go-github/v56 v56.0.0
-	github.com/migueleliasweb/go-github-mock v1.0.1
+	github.com/migueleliasweb/go-github-mock v1.3.0
 	github.com/reugn/async v0.8.0
 	github.com/stretchr/testify v1.10.0
 )
@@ -16,7 +15,7 @@ require (
 require (
 	github.com/cli/safeexec v1.0.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/google/go-github/v64 v64.0.0 // indirect
+	github.com/google/go-github/v71 v71.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
