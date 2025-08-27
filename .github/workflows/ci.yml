@@ -15,7 +15,7 @@ jobs:
         uses: ./.github/actions/setup-golang
         with:
           cache: false
-      - uses: golangci/golangci-lint-action@v4
+      - uses: golangci/golangci-lint-action@v8
         with:
           version: v1.54.2
 
