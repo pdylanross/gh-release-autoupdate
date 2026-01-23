@@ -26,8 +26,8 @@ github.com/migueleliasweb/go-github-mock v1.0.1 h1:amLEECVny28RCD1ElALUpQxrAimam
 github.com/migueleliasweb/go-github-mock v1.0.1/go.mod h1:8PJ7MpMoIiCBBNpuNmvndHm0QicjsE+hjex1yMGmjYQ=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/reugn/async v0.8.0 h1:XnIZE0CkON5T65zFIdNI0vpmt0Z/z+XLVW4OFkMB2VQ=
-github.com/reugn/async v0.8.0/go.mod h1:DeWMb1afOLRJjetJq+gVVII9jD3njyndoLbfpj9pr0M=
+github.com/reugn/async v0.10.0 h1:TRccMRb9HClRU0/st3DbhvPWzeHHjC0q2cRwNy9EHYg=
+github.com/reugn/async v0.10.0/go.mod h1:fNLcyRrqVzZ/C/TKzppyIKQxZDLLuRioaDlrjvE9KOk=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
 golang.org/x/time v0.3.0 h1:rg5rLMjNzMS1RkNLzCG38eapWhnYLFYXDXj2gOlr8j4=
